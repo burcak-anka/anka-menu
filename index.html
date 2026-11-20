@@ -1,31 +1,69 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anka Kahve Yeşil Bahçe</title>
-
-    <link rel="stylesheet" href="style.css">
+    <title>Anka Kahve Evi - Yönetim</title>
+    <link rel="stylesheet" href="yonetim.css">
 </head>
 
 <body>
 
     <header>
-        <img src="anka-logo-tam.png" alt="Anka Kahve Yeşil Bahçe Logosu" class="logo">
-        <h1>Anka Kahve Yeşil Bahçe</h1>
-        <p>Menümüze hoş geldiniz!</p>
+        <h1>Anka Kahve Evi</h1>
+        <p>Yönetim Paneli</p>
     </header>
 
     <main>
-        <div id="menu-container">
-            <p>Menümüz yükleniyor...</p>
-        </div>
+
+        <section id="giris-bolumu" class="giris-kutusu">
+            <h2>Yetkili Girişi</h2>
+
+            <form id="giris-formu">
+                <label for="eposta">E-posta</label>
+                <input type="email" id="eposta" required>
+
+                <label for="sifre">Şifre</label>
+                <input type="password" id="sifre" required>
+
+                <button type="submit">Giriş Yap</button>
+            </form>
+
+            <p id="mesaj"></p>
+        </section>
+
+        <section id="yonetim-bolumu" hidden>
+            <h2>Ürün Yönetimi</h2>
+            <button type="button" id="cikis-yap">Çıkış Yap</button>
+
+            <h3>Yeni Ürün Ekle</h3>
+
+            <form id="urun-formu">
+                <label for="kategori">Kategori</label>
+                <select id="kategori" required></select>
+
+                <label for="urun-adi">Ürün Adı</label>
+                <input type="text" id="urun-adi" required>
+
+                <label for="urun-fiyat">Fiyat (TL)</label>
+                <input type="number" id="urun-fiyat"
+                    min="0" step="0.01" required>
+
+                <button type="submit">Ürün Ekle</button>
+            </form>
+
+            <p id="urun-mesaj"></p>
+
+            <h3>Mevcut Ürünler</h3>
+            <div id="urun-listesi">Ürünler yükleniyor...</div>
+        </section>
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
+    <script src="yonetim.js"></script>
 
 </body>
-
 </html>
