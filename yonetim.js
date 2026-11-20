@@ -1,4 +1,3 @@
-
 const SUPABASE_URL = "https://moaapgvuvvgwsvloiril.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Q0idxR5yVgTSIcDEu8ISVg_ixdZAGVj";
 
@@ -11,6 +10,7 @@ const girisBolumu = document.getElementById("giris-bolumu");
 const yonetimBolumu = document.getElementById("yonetim-bolumu");
 const mesaj = document.getElementById("mesaj");
 const urunMesaj = document.getElementById("urun-mesaj");
+const kategoriMesaj = document.getElementById("kategori-mesaj");
 
 async function yetkiKontrol() {
     const { data: { session } } =
@@ -84,6 +84,34 @@ async function kategorileriGetir() {
         secim.appendChild(secenek);
     });
 }
+
+document.getElementById("kategori-formu")
+    .addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const ad = document.getElementById("kategori-adi").value.trim();
+
+        if (!ad) {
+            kategoriMesaj.textContent = "Kategori adı girin.";
+            return;
+        }
+
+        kategoriMesaj.textContent = "Kategori ekleniyor...";
+
+        const { error } = await supabaseClient
+            .from("kategoriler")
+            .insert({ ad: ad });
+
+        if (error) {
+            kategoriMesaj.textContent = "Hata: " + error.message;
+            return;
+        }
+
+        kategoriMesaj.textContent = "Kategori eklendi!";
+        this.reset();
+
+        await kategorileriGetir();
+    });
 
 async function urunleriGetir() {
     const liste = document.getElementById("urun-listesi");
