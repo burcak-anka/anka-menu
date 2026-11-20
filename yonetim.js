@@ -83,6 +83,86 @@ async function kategorileriGetir() {
         secenek.textContent = kategori.ad;
         secim.appendChild(secenek);
     });
+
+    await kategoriListesiniGetir();
+}
+
+async function kategoriListesiniGetir() {
+    const liste = document.getElementById("kategori-listesi");
+    const { data, error } = await supabaseClient
+        .from("kategoriler")
+        .select("*")
+        .order("sira");
+
+    if (error) {
+        liste.textContent = "Kategoriler yüklenemedi: " + error.message;
+        return;
+    }
+
+    liste.innerHTML = "";
+
+    data.forEach(kategori => {
+        const alan = document.createElement("div");
+        const bilgi = document.createElement("p");
+        bilgi.textContent = kategori.ad;
+
+        const duzenleButonu = document.createElement("button");
+        duzenleButonu.textContent = "Adını Değiştir";
+        duzenleButonu.onclick = async function() {
+            const yeniAd = prompt("Yeni kategori adını girin:", kategori.ad);
+            if (yeniAd === null || yeniAd.trim() === "") return;
+
+            const { error } = await supabaseClient
+                .from("kategoriler")
+                .update({ ad: yeniAd.trim() })
+                .eq("id", kategori.id);
+
+            if (error) {
+                alert("Kategori adı değiştirilemedi: " + error.message);
+            } else {
+                await kategorileriGetir();
+                await urunleriGetir();
+            }
+        };
+
+        const silButonu = document.createElement("button");
+        silButonu.textContent = "Kategoriyi Sil";
+        silButonu.onclick = async function() {
+            const { data: urunler, error: urunHatasi } = await supabaseClient
+                .from("urunler")
+                .select("id")
+                .eq("kategori_id", kategori.id)
+                .limit(1);
+
+            if (urunHatasi) {
+                alert("Ürünler kontrol edilemedi: " + urunHatasi.message);
+                return;
+            }
+
+            if (urunler.length > 0) {
+                alert("Bu kategoride ürünler var. Önce bu kategorideki ürünleri silmelisiniz veya başka kategoriye taşımalısınız. Ürünlerinizin yanlışlıkla silinmemesi için kategori silinmedi.");
+                return;
+            }
+
+            if (!confirm(kategori.ad + " kategorisi silinsin mi?")) return;
+
+            const { error } = await supabaseClient
+                .from("kategoriler")
+                .delete()
+                .eq("id", kategori.id);
+
+            if (error) {
+                alert("Kategori silinemedi: " + error.message);
+            } else {
+                await kategorileriGetir();
+            }
+        };
+
+        alan.appendChild(bilgi);
+        alan.appendChild(duzenleButonu);
+        alan.appendChild(silButonu);
+        liste.appendChild(alan);
+    });
 }
 
 document.getElementById("kategori-formu")
